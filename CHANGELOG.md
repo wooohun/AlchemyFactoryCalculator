@@ -1,9 +1,23 @@
 # Alchemy Factory Planner - Changelog
 
-## v50 - Hotfix: Missing Inputs
-* **Fix:** Restored hidden HTML checkboxes (`selfFeed`, `selfFert`) that were accidentally removed in v49, causing a "Cannot read properties of null" crash on load.
+## v54 - Logic Repair
+* **Fix:** **Tree Pruning Logic.** Disabled the "Stop Recursion" rule when a node is handled by Self-Fuel/Self-Fert. 
+    * *Impact:* Ingredient sub-chains (e.g., Sage for Basic Fertilizer) are now fully calculated and visible, ensuring the "Internal Module" at the bottom receives the correct demand load.
 
-## v49 - UI Polish & Data Overhaul
+## v53 - Lean Architecture
+* **Refactor:** Removed the massive embedded database string from `index.html`.
+* **Logic:** The calculator now relies exclusively on the external `alchemy_db.js` file or Local Storage.
+* **Editor:** The Database Editor tab now gracefully handles local file restrictions by showing a helpful message instead of crashing.
+
+## v50-v52 - Data Integrity
+* **Fix:** Restored missing HTML input elements that caused load crashes.
+* **Fix:** Restored missing Alternate Recipes (Sand, Salt, etc.) to the offline database source.
+
+## v49 - Database Overhaul (v14)
+* **Crash Fix:** Removed `Mors_Alt` (Vitality Essence -> Oblivion Essence) to prevent infinite recursion loops.
+* **Crash Fix:** Removed all "Ingot -> Powder" recycling recipes that caused "Maximum Stack Size" errors.
+* **Correction:** `Oblivion Essence` is now correctly defined as a manufactured item (Sage Seeds -> Paradox Crucible), not a raw material.
+* **Cleanup:** Organized database items into distinct categories (Herbs, Fuels, Relics, etc.) for easier maintenance.
 * **Database:** **Complete Rewrite.** Replaced the entire database with validated data from the `faultyd3v` repository.
     * Updated all prices, crafting times, and yields.
     * Added `probability` (Failure Rate) and `failures` (Byproduct) data to recipes like Coke, Steel, and Silver/Gold Powders.
