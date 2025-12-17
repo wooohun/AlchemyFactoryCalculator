@@ -1,5 +1,18 @@
 # Alchemy Factory Planner - Changelog
 
+## v59 - Byproducts & UX
+* **Relocation:** Moved the **"Byproducts (Waste)"** section from the Construction List to the Main Tree (Column 2), directly below "External Inputs," for better visibility of the complete production flow.
+* **UX:** **Smart Search Clear.** The search box arrow (`▼`) now transforms into a Clear button (`✖`) when text is entered, allowing for instant resetting of the search field.
+* **Data Safety:** Implemented **Auto-Update Logic.** The calculator now detects if the `alchemy_db.js` file is newer than the cached browser data and automatically refreshes the database, preventing "No build data" errors after updates.
+
+## v58 - Layout & Construction
+* **UI Layout:** Transitioned to a compact **4-Column Layout** (Inputs | Tree | Construction | Upgrades).
+* **Scale:** Reduced global UI scale (font size 13px) to support comfortable 100% zoom usage on standard 1080p monitors.
+* **Construction List:**
+    * **Grouping:** Machines are now grouped by type (e.g., "Assembler (8)").
+    * **Expansion:** Clicking a machine group expands it to show the specific build costs (e.g., "16 Iron Ingot").
+    * **Grand Total:** Added a **"Total Material Cost"** summary at the bottom, summing up every resource needed to build the entire factory plan.
+
 ## v57 - Smart Search
 * **UI Upgrade:** Replaced the "Target Item" dropdown with a **Smart Combobox**.
     * **Features:** Ghost Text Autofill, Hybrid Sorting (Starts-With priority), and Keyboard Navigation.

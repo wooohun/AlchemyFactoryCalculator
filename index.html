@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alchemy Factory Planner v57</title>
+    <title>Alchemy Factory Planner v59</title>
     <script src="alchemy_db.js"></script> 
     
     <style>
@@ -16,47 +16,96 @@
             --row-id: #4fc3f7; --byproduct: #9c27b0;
         }
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; height: 100vh; display: flex; flex-direction: column; }
+        /* Reduced font size for tighter UI (80% scale equivalent) */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            padding: 0; 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            font-size: 13px; 
+        }
         
         /* --- HEADER --- */
-        header { background: #111; padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-        h1 { color: var(--accent); margin: 0; font-size: 1.2em; }
-        .repo-link { color: #888; text-decoration: none; font-size: 0.9em; margin-right: 15px; border: 1px solid #444; padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
+        header { 
+            background: #111; 
+            padding: 8px 20px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            flex-shrink: 0; 
+        }
+        h1 { color: var(--accent); margin: 0; font-size: 1.1em; }
+        .repo-link { 
+            color: #888; text-decoration: none; font-size: 0.9em; 
+            margin-right: 15px; border: 1px solid #444; padding: 4px 8px; 
+            border-radius: 4px; transition: 0.2s; 
+        }
         .repo-link:hover { color: #fff; border-color: #666; background: #222; }
         .subtitle { color: #888; font-size: 0.8em; margin-left: 10px; cursor: pointer; text-decoration: underline; }
         .subtitle:hover { color: #fff; }
         
         /* --- TABS --- */
         .tabs { display: flex; gap: 5px; }
-        .tab-btn { background: #222; border: 1px solid var(--border); color: #888; padding: 8px 16px; cursor: pointer; border-radius: 4px; }
+        .tab-btn { 
+            background: #222; border: 1px solid var(--border); 
+            color: #888; padding: 6px 12px; cursor: pointer; 
+            border-radius: 4px; font-size: 0.9em; 
+        }
         .tab-btn:hover { background: #333; color: #fff; }
         .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); font-weight: bold; }
 
-        /* --- LAYOUT --- */
+        /* --- LAYOUT (4 Columns) --- */
         main { flex: 1; overflow: hidden; position: relative; }
-        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding: 20px; display: none; }
+        .view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; padding: 15px; display: none; }
         .view.active { display: block; }
-        .app-grid { display: grid; grid-template-columns: 320px 1fr 280px; gap: 20px; max-width: 1800px; margin: 0 auto; height: 100%; }
-        .panel { background: var(--panel); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .panel h3 { margin-top: 0; color: #fff; border-bottom: 1px solid #444; padding-bottom: 10px; font-size: 1.1em; }
+        
+        /* 260px | 1fr | 280px | 220px */
+        .app-grid { 
+            display: grid; 
+            grid-template-columns: 260px 1fr 280px 220px; 
+            gap: 15px; 
+            max-width: 1920px; 
+            margin: 0 auto; 
+            height: 100%; 
+        }
+        .panel { 
+            background: var(--panel); 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border); 
+            margin-bottom: 15px; 
+        }
+        .panel h3 { 
+            margin-top: 0; color: #fff; 
+            border-bottom: 1px solid #444; 
+            padding-bottom: 8px; 
+            font-size: 1.05em; 
+            margin-bottom: 10px; 
+        }
 
         /* --- CONTROLS --- */
-        .input-group { margin-bottom: 15px; position: relative; }
-        label { display: block; font-size: 0.85em; color: #aaa; margin-bottom: 5px; }
-        select { width: 100%; padding: 8px; background: #333; border: 1px solid #555; color: white; border-radius: 4px; }
+        .input-group { margin-bottom: 12px; position: relative; }
+        label { display: block; font-size: 0.85em; color: #aaa; margin-bottom: 4px; }
+        select { width: 100%; padding: 6px; background: #333; border: 1px solid #555; color: white; border-radius: 4px; font-size: 1em; }
         
         /* --- SMART COMBOBOX --- */
         .combobox-container { position: relative; width: 100%; }
         .input-wrapper { position: relative; display: flex; align-items: center; background: #333; border: 1px solid #555; border-radius: 4px; }
         .real-input {
-            width: 100%; background: transparent; border: none; color: white; padding: 8px; font-size: 1em; z-index: 2; position: relative;
+            width: 100%; background: transparent; border: none; color: white; padding: 6px; font-size: 1em; z-index: 2; position: relative;
         }
         .real-input:focus { outline: none; border-color: var(--accent); }
         .ghost-input {
-            position: absolute; top: 8px; left: 9px; /* Adjust for padding/border */
+            position: absolute; top: 6px; left: 7px;
             color: #666; font-size: 1em; z-index: 1; pointer-events: none; white-space: pre;
         }
-        .combo-arrow { padding: 0 10px; color: #888; font-size: 0.8em; cursor: pointer; }
+        .combo-arrow { padding: 0 8px; color: #888; font-size: 0.8em; cursor: pointer; z-index: 3; user-select: none; }
+        .combo-arrow:hover { color: #fff; }
         
         .combobox-list {
             position: absolute; top: 100%; left: 0; right: 0;
@@ -65,51 +114,68 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-top: 2px;
         }
         .combobox-list.active { display: block; }
-        .combo-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #333; font-size: 0.95em; display: flex; justify-content: space-between; }
+        .combo-item { padding: 6px 8px; cursor: pointer; border-bottom: 1px solid #333; font-size: 0.95em; display: flex; justify-content: space-between; }
         .combo-item:hover, .combo-item.selected { background: #333; color: white; }
         .combo-item.selected { border-left: 3px solid var(--accent); background: #2e3d30; }
         .combo-cat { font-size: 0.75em; color: #666; font-style: italic; }
 
         /* --- SPINNERS --- */
-        .spinner-wrapper { display: flex; align-items: stretch; width: 100%; height: 40px; }
-        .spinner-btn { background: #444; border: 1px solid #555; color: white; width: 45px; cursor: pointer; font-size: 1.4em; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
+        .spinner-wrapper { display: flex; align-items: stretch; width: 100%; height: 32px; }
+        .spinner-btn { background: #444; border: 1px solid #555; color: white; width: 35px; cursor: pointer; font-size: 1.2em; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
         .spinner-btn:hover { background: #555; }
         .spinner-btn:active { background: var(--accent); }
         .spinner-btn.minus { border-radius: 4px 0 0 4px; }
         .spinner-btn.plus { border-radius: 0 4px 4px 0; }
-        input[type="number"] { flex: 1; text-align: center; font-size: 1.2em; background: #333; border: 1px solid #555; border-left: none; border-right: none; color: white; width: 10px; -moz-appearance: textfield; }
+        input[type="number"] { flex: 1; text-align: center; font-size: 1.1em; background: #333; border: 1px solid #555; border-left: none; border-right: none; color: white; width: 10px; -moz-appearance: textfield; }
         input:disabled { opacity: 0.5; cursor: not-allowed; background: #2a2a2a; color: #aaa; }
         
         /* SPLIT BUTTONS */
-        .split-btn-container { display: flex; gap: 5px; margin-top: 8px; }
-        .split-btn { flex: 1; padding: 8px 4px; border: 1px solid #555; border-radius: 4px; cursor: pointer; font-size: 0.8em; font-weight: bold; transition: 0.2s; color: #ddd; background: #333; text-align: center; }
+        .split-btn-container { display: flex; gap: 5px; margin-top: 6px; }
+        .split-btn { flex: 1; padding: 6px 4px; border: 1px solid #555; border-radius: 4px; cursor: pointer; font-size: 0.8em; font-weight: bold; transition: 0.2s; color: #ddd; background: #333; text-align: center; }
         .split-btn:hover:not(:disabled) { background: #444; color: #fff; }
         .split-btn:disabled { opacity: 0.5; cursor: default; border-color: #444; }
         .btn-active-green { background: #2e7d32 !important; border-color: #4caf50 !important; color: white !important; }
         .btn-inactive-red { background: #333 !important; color: #aaa !important; }
 
-        /* --- LISTS --- */
+        /* --- CONSTRUCTION LIST (Tree Style) --- */
         .build-list { list-style: none; padding: 0; margin: 0; }
-        .build-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333; font-size: 0.9em; }
-        .build-item:last-child { border-bottom: none; }
-        .build-name { color: #ccc; }
-        .build-count { font-weight: bold; color: var(--accent); }
-        .byproduct-item { color: var(--byproduct); font-style: italic; }
+        .build-group { margin-bottom: 2px; }
+        .build-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 6px 8px; background: #333; border-radius: 4px; cursor: pointer; 
+            font-weight: bold; color: #ccc; border: 1px solid transparent; user-select: none;
+        }
+        .build-header:hover { background: #444; border-color: #555; color: #fff; }
+        .build-arrow { font-size: 0.8em; margin-right: 8px; transition: transform 0.1s; display: inline-block; width: 10px; }
+        .expanded .build-arrow { transform: rotate(90deg); }
+        
+        .build-sublist { list-style: none; padding: 0 0 0 10px; margin: 0; display: none; border-left: 2px solid #444; margin-left: 10px; }
+        .expanded .build-sublist { display: block; }
+        
+        .build-subitem { 
+            display: flex; justify-content: space-between; padding: 4px 8px; 
+            font-size: 0.9em; color: #aaa; border-bottom: 1px dashed #333; 
+        }
+        .build-subitem:last-child { border-bottom: none; }
+        .build-val { color: var(--gold); }
+
+        .total-mats-header { margin-top: 20px; border-top: 1px solid #555; padding-top: 10px; font-weight: bold; color: var(--accent); text-transform: uppercase; font-size: 0.9em; }
+        .total-mat-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #333; font-size: 0.95em; color: #ddd; }
         
         /* --- SUMMARY BOX --- */
-        .summary-box { background: #252525; border-left: 4px solid var(--accent); padding: 15px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 15px; }
-        .stat-block { display: flex; flex-direction: column; padding-right: 15px; border-right: 1px solid #444; }
+        .summary-box { background: #252525; border-left: 4px solid var(--accent); padding: 12px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 10px; }
+        .stat-block { display: flex; flex-direction: column; padding-right: 10px; border-right: 1px solid #444; }
         .stat-block:last-child { border-right: none; }
         .stat-label { font-size: 0.75em; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-size: 1.2em; font-weight: bold; color: #fff; margin-top: 5px; }
+        .stat-value { font-size: 1.1em; font-weight: bold; color: #fff; margin-top: 4px; }
         .stat-sub { font-size: 0.85em; color: var(--warn); margin-top: 2px; }
         .gold-profit { color: var(--profit); } .gold-cost { color: var(--gold); } .net-positive { color: #69f0ae; }
 
         /* --- TREE NODES --- */
-        .node { margin-left: 20px; padding: 6px 0; border-left: 2px solid #555; position: relative; }
-        .node-content { display: flex; align-items: center; gap: 10px; background: #222; padding: 8px 12px; border-radius: 4px; border: 1px solid #333; }
-        .row-id { color: var(--row-id); font-family: monospace; font-weight: bold; min-width: 25px; }
-        .qty { color: var(--accent); font-weight: bold; min-width: 80px; }
+        .node { margin-left: 15px; padding: 4px 0; border-left: 2px solid #555; position: relative; }
+        .node-content { display: flex; align-items: center; gap: 8px; background: #222; padding: 6px 10px; border-radius: 4px; border: 1px solid #333; }
+        .row-id { color: var(--row-id); font-family: monospace; font-weight: bold; min-width: 20px; font-size: 0.9em; }
+        .qty { color: var(--accent); font-weight: bold; min-width: 70px; }
         .machine-tag { background: #333; padding: 2px 6px; border-radius: 3px; font-size: 0.85em; border: 1px solid #444; color: #fff; font-weight: bold; }
         .heat-tag { color: var(--warn); font-size: 0.85em; margin-left: 5px; }
         .bio-tag { color: var(--bio); font-size: 0.85em; margin-left: 5px; }
@@ -117,9 +183,9 @@
         .fail-tag { color: var(--danger); font-size: 0.85em; margin-left: 5px; font-weight: bold; }
         .details { font-size: 0.9em; color: #ccc; }
         .output-tag { color: var(--info); font-size: 0.85em; margin-left: 10px; font-weight: bold; border-left: 1px solid #555; padding-left: 10px; }
-        .swap-btn { background: transparent; border: 1px solid #555; color: #888; width: 24px; height: 24px; border-radius: 12px; font-size: 12px; cursor: pointer; margin-left: 10px; }
+        .swap-btn { background: transparent; border: 1px solid #555; color: #888; width: 22px; height: 22px; border-radius: 11px; font-size: 11px; cursor: pointer; margin-left: 10px; }
         .swap-btn:hover { background: #444; color: white; border-color: #fff; }
-        .section-header { margin-top: 30px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #555; color: #888; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em; font-weight: bold; }
+        .section-header { margin-top: 25px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px dashed #555; color: #888; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85em; font-weight: bold; }
 
         /* --- MODALS & EDITOR --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
@@ -129,12 +195,12 @@
         .recipe-option.active { border-color: var(--accent); background: #2e3d30; }
         .recipe-header { font-weight: bold; font-size: 1.1em; margin-bottom: 4px; display:flex; justify-content:space-between; width:100%; }
         .recipe-details { font-size: 0.9em; color: #aaa; }
-        .editor-container { max-width: 1200px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; }
+        .editor-container { max-width: 1400px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; }
         #json-editor { flex: 1; background: #151515; color: #a5d6a7; font-family: 'Consolas', 'Courier New', monospace; border: 1px solid #444; padding: 15px; resize: none; line-height: 1.4; white-space: pre; }
         .editor-toolbar { margin-bottom: 10px; display: flex; gap: 10px; }
-        button.save-btn { width: 100%; margin-top: 10px; background: #333; border: 1px solid var(--accent); color: var(--accent); padding: 10px; cursor: pointer; font-weight: bold; }
+        button.save-btn { width: 100%; margin-top: 10px; background: #333; border: 1px solid var(--accent); color: var(--accent); padding: 8px; cursor: pointer; font-weight: bold; font-size: 0.9em; }
         button.save-btn:hover { background: var(--accent); color: white; }
-        button.reset-btn { width: 100%; margin-top: 20px; background: transparent; border: 1px solid var(--danger); color: var(--danger); font-size:0.8em; padding: 5px; cursor: pointer; }
+        button.reset-btn { width: 100%; margin-top: 15px; background: transparent; border: 1px solid var(--danger); color: var(--danger); font-size:0.8em; padding: 5px; cursor: pointer; }
         button.reset-btn:hover { background: var(--danger); color: white; }
     </style>
 </head>
@@ -145,7 +211,7 @@
             <h1>Alchemy Factory Planner</h1>
             <span style="margin-left: 20px;">
                 <a href="https://github.com/JoeJoesGit/AlchemyFactoryCalculator" target="_blank" class="repo-link">GitHub Repo</a>
-                <span class="subtitle" onclick="showChangelog()">v57 | View Changelog</span>
+                <span class="subtitle" onclick="showChangelog()">v59 | View Changelog</span>
             </span>
         </div>
         <div class="tabs">
@@ -159,12 +225,12 @@
             <div class="modal-content">
                 <div class="modal-header"><h2>Changelog</h2><button class="close-modal" onclick="closeModal('changelog-modal')">&times;</button></div>
                 <div style="line-height:1.6; color:#ccc;">
-                    <strong>v57 - Smart Search</strong><br>
-                    - <strong>UI Upgrade:</strong> Replaced Item Dropdown with a Smart Search Combobox.<br>
-                    - Features: Ghost Text Autofill, Hybrid Sorting (Starts-With priority), Keyboard Navigation.<br>
-                    - Added 1/3 Belt Speed option.<br><br>
-                    <strong>v56 - Liquid Logic Fix</strong><br>
-                    - Liquid outputs (e.g. Linseed Oil) are no longer restricted by Belt Speed limits.<br>
+                    <strong>v59 - Byproducts & UX</strong><br>
+                    - <strong>Relocation:</strong> Moved Byproducts to the Main Tree (below External Inputs) for better visibility.<br>
+                    - <strong>UX:</strong> Smart Search box now has a "Clear" button (X) when text is present to instantly reset the search.<br><br>
+                    <strong>v58 - Layout & Construction</strong><br>
+                    - <strong>UI Layout:</strong> Switched to a compact 4-Column Layout.<br>
+                    - <strong>Construction List:</strong> Grouped by machine type with grand total material costs.<br>
                     <a href="https://github.com/JoeJoesGit/AlchemyFactoryCalculator/blob/main/CHANGELOG.md" target="_blank" style="color:var(--accent);">View Full History on GitHub</a>
                 </div>
             </div>
@@ -185,19 +251,17 @@
                 <div>
                     <div class="panel">
                         <h3>Production Goal</h3>
-                        
                         <div class="input-group">
                             <label>Target Item</label>
                             <div class="combobox-container" id="targetCombobox">
                                 <div class="input-wrapper" onclick="toggleCombobox()">
                                     <div id="ghost-text" class="ghost-input"></div>
-                                    <input type="text" id="targetItemInput" class="real-input" placeholder="Select or Type..." autocomplete="off" oninput="filterCombobox()" onkeydown="handleComboKey(event)" onblur="closeComboboxDelayed()">
-                                    <div class="combo-arrow">▼</div>
+                                    <input type="text" id="targetItemInput" class="real-input" placeholder="Select or Type..." autocomplete="off" oninput="filterCombobox(); updateComboIcon();" onkeydown="handleComboKey(event)" onblur="closeComboboxDelayed()">
+                                    <div id="combo-btn" class="combo-arrow" onclick="handleComboIconClick(event)">▼</div>
                                 </div>
                                 <div id="combobox-list" class="combobox-list"></div>
                             </div>
                         </div>
-
                         <div class="input-group">
                             <label>Belt Load</label>
                             <select id="ratePreset" onchange="applyPreset()">
@@ -224,7 +288,6 @@
 
                     <div class="panel">
                         <h3>Logistics</h3>
-                        
                         <div class="input-group">
                             <label>Heat Source</label>
                             <select id="fuelSelect" onchange="updateDefaultButtonState(); calculate();"></select>
@@ -234,7 +297,6 @@
                                 <button id="btnDefFuel" class="split-btn" onclick="setDefaultFuel()">Make Default</button>
                             </div>
                         </div>
-
                         <div class="input-group">
                             <label>Fertilizer Source</label>
                             <select id="fertSelect" onchange="updateDefaultButtonState(); calculate();"></select>
@@ -245,16 +307,19 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="panel">
-                        <h3>Construction List</h3>
-                        <ul id="construction-list" class="build-list"></ul>
-                    </div>
                 </div>
 
                 <div id="results-area">
                     <div id="summary-container"></div>
                     <div id="tree"></div>
+                </div>
+
+                <div>
+                    <div class="panel">
+                        <h3>Construction List</h3>
+                        <ul id="construction-list" class="build-list"></ul>
+                        <div id="total-mats-container"></div>
+                    </div>
                 </div>
 
                 <div>
@@ -373,7 +438,7 @@ function init() {
     if(!DB.settings.preferredRecipes) DB.settings.preferredRecipes = {};
 
     prepareComboboxData();
-    populateSelects(); // Populates Fuel/Fert lists only now
+    populateSelects(); 
     loadSettingsToUI();
     applyPreset();
     loadEditorContent(); 
@@ -400,7 +465,6 @@ function loadEditorContent() {
 function prepareComboboxData() {
     const allItems = new Set(Object.keys(DB.items || {}));
     if(DB.recipes) DB.recipes.forEach(r => Object.keys(r.outputs).forEach(k => allItems.add(k)));
-    
     allItemsList = Array.from(allItems).sort().map(name => {
         return { name: name, category: (DB.items[name] ? DB.items[name].category : "Other") };
     });
@@ -409,21 +473,38 @@ function prepareComboboxData() {
 function toggleCombobox() {
     const list = document.getElementById('combobox-list');
     const input = document.getElementById('targetItemInput');
+    // If not visible, open. If visible, close.
     if(list.style.display === 'block') { closeCombobox(); } 
-    else { 
-        input.focus(); 
-        filterCombobox(); // Show all
+    else { input.focus(); filterCombobox(); }
+}
+
+function updateComboIcon() {
+    const input = document.getElementById('targetItemInput');
+    const icon = document.getElementById('combo-btn');
+    if(input.value.trim().length > 0) {
+        icon.innerText = "✖";
+        icon.style.color = "#ff5252";
+    } else {
+        icon.innerText = "▼";
+        icon.style.color = "#888";
     }
 }
 
-function closeCombobox() {
-    document.getElementById('combobox-list').style.display = 'none';
-    currentFocus = -1;
+function handleComboIconClick(e) {
+    e.stopPropagation();
+    const input = document.getElementById('targetItemInput');
+    if(input.value.trim().length > 0) {
+        input.value = "";
+        filterCombobox();
+        updateComboIcon();
+        input.focus();
+    } else {
+        toggleCombobox();
+    }
 }
 
-function closeComboboxDelayed() {
-    setTimeout(() => closeCombobox(), 200); // Delay to allow click event on items
-}
+function closeCombobox() { document.getElementById('combobox-list').style.display = 'none'; currentFocus = -1; }
+function closeComboboxDelayed() { setTimeout(() => closeCombobox(), 200); }
 
 function filterCombobox() {
     const input = document.getElementById('targetItemInput');
@@ -431,12 +512,10 @@ function filterCombobox() {
     const list = document.getElementById('combobox-list');
     const ghost = document.getElementById('ghost-text');
     
-    list.innerHTML = '';
-    list.style.display = 'block';
+    list.innerHTML = ''; list.style.display = 'block';
+    updateComboIcon();
     
-    // Sort logic: Starts With > Contains > Alphabetical
     let matches = allItemsList.filter(item => item.name.toLowerCase().includes(filter));
-    
     matches.sort((a, b) => {
         const aStarts = a.name.toLowerCase().startsWith(filter);
         const bStarts = b.name.toLowerCase().startsWith(filter);
@@ -445,30 +524,20 @@ function filterCombobox() {
         return a.name.localeCompare(b.name);
     });
 
-    // Populate List
-    matches.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = 'combo-item';
+    matches.forEach((item) => {
+        const div = document.createElement('div'); div.className = 'combo-item';
         div.innerHTML = `<span>${item.name}</span> <span class="combo-cat">${item.category}</span>`;
         div.onclick = function() { selectItem(item.name); };
         list.appendChild(div);
     });
 
-    // Ghost Text Logic
     if (filter.length > 0 && matches.length > 0) {
         const topMatch = matches[0].name;
         if (topMatch.toLowerCase().startsWith(filter)) {
-            // Only show ghost if letters match case-insensitive
             const ghostSuffix = topMatch.substring(filter.length);
-            // Reconstruct visual string: User Typed + Ghost Suffix
-            // We use input.value to keep user casing, but logic ensures it matches char-for-char
             ghost.innerText = input.value + ghostSuffix;
-        } else {
-            ghost.innerText = "";
-        }
-    } else {
-        ghost.innerText = "";
-    }
+        } else { ghost.innerText = ""; }
+    } else { ghost.innerText = ""; }
 }
 
 function handleComboKey(e) {
@@ -478,83 +547,51 @@ function handleComboKey(e) {
     const ghost = document.getElementById('ghost-text');
 
     if (e.key === 'ArrowDown') {
-        currentFocus++;
-        if (currentFocus >= items.length) currentFocus = 0;
-        setActive(items);
-        e.preventDefault(); // Prevent cursor move
+        currentFocus++; if (currentFocus >= items.length) currentFocus = 0; setActive(items); e.preventDefault();
     } else if (e.key === 'ArrowUp') {
-        currentFocus--;
-        if (currentFocus < 0) currentFocus = items.length - 1;
-        setActive(items);
-        e.preventDefault();
+        currentFocus--; if (currentFocus < 0) currentFocus = items.length - 1; setActive(items); e.preventDefault();
     } else if (e.key === 'Enter') {
         e.preventDefault();
-        if (currentFocus > -1 && items.length > 0) {
-            items[currentFocus].click();
-        } else if (ghost.innerText.length > input.value.length) {
-            // Commit Ghost Text
-            selectItem(ghost.innerText);
-        } else if (items.length > 0) {
-            // Auto-select top item if typed strictly
-            items[0].click(); 
-        } else {
-            // No match selected, trigger calc with raw input (handled by calculate logic)
-            closeCombobox();
-            calculate();
-        }
+        if (currentFocus > -1 && items.length > 0) { items[currentFocus].click(); } 
+        else if (ghost.innerText.length > input.value.length) { selectItem(ghost.innerText); } 
+        else if (items.length > 0) { items[0].click(); } 
+        else { closeCombobox(); calculate(); }
     } else if (e.key === 'Tab') {
-        if (ghost.innerText.length > input.value.length) {
-            e.preventDefault();
-            selectItem(ghost.innerText);
-        } else {
-            closeCombobox();
-        }
+        if (ghost.innerText.length > input.value.length) { e.preventDefault(); selectItem(ghost.innerText); } 
+        else { closeCombobox(); }
     }
 }
 
 function setActive(items) {
     if (!items) return;
-    for (let i = 0; i < items.length; i++) {
-        items[i].classList.remove('selected');
-    }
+    for (let i = 0; i < items.length; i++) { items[i].classList.remove('selected'); }
     if (currentFocus >= 0 && currentFocus < items.length) {
-        items[currentFocus].classList.add('selected');
-        items[currentFocus].scrollIntoView({ block: 'nearest' });
-        
-        // Update Ghost to match selection if navigating
+        items[currentFocus].classList.add('selected'); items[currentFocus].scrollIntoView({ block: 'nearest' });
         const name = items[currentFocus].getElementsByTagName('span')[0].innerText;
         document.getElementById('targetItemInput').value = name;
-        document.getElementById('ghost-text').innerText = ""; // Clear ghost on nav
+        document.getElementById('ghost-text').innerText = "";
+        updateComboIcon();
     }
 }
 
 function selectItem(name) {
-    const input = document.getElementById('targetItemInput');
-    input.value = name;
-    document.getElementById('ghost-text').innerText = "";
-    closeCombobox();
-    calculate();
+    const input = document.getElementById('targetItemInput'); input.value = name;
+    document.getElementById('ghost-text').innerText = ""; closeCombobox(); updateComboIcon(); calculate();
 }
 
 function loadSettingsToUI() {
     if (DB.settings) {
-        ['lvlBelt','lvlSpeed','lvlAlchemy','lvlFuel','lvlFert'].forEach(k => {
-            if(DB.settings[k] !== undefined) document.getElementById(k).value = DB.settings[k];
-        });
+        ['lvlBelt','lvlSpeed','lvlAlchemy','lvlFuel','lvlFert'].forEach(k => { if(DB.settings[k] !== undefined) document.getElementById(k).value = DB.settings[k]; });
         if(DB.settings.defaultFuel) document.getElementById('fuelSelect').value = DB.settings.defaultFuel; 
         if(DB.settings.defaultFert) document.getElementById('fertSelect').value = DB.settings.defaultFert; 
     }
     updateDefaultButtonState();
 }
 
-// --- STANDARD FUNCTIONS ---
 function populateSelects() {
-    const fuelSel = document.getElementById('fuelSelect');
-    const fertSel = document.getElementById('fertSelect');
+    const fuelSel = document.getElementById('fuelSelect'); const fertSel = document.getElementById('fertSelect');
     fuelSel.innerHTML = ''; fertSel.innerHTML = '';
-
-    const fuels = [];
-    const ferts = [];
+    const fuels = []; const ferts = [];
     const allItems = new Set(Object.keys(DB.items || {}));
     if(DB.recipes) DB.recipes.forEach(r => Object.keys(r.outputs).forEach(k => allItems.add(k)));
 
@@ -564,84 +601,42 @@ function populateSelects() {
         if(itemDef.nutrientValue) ferts.push({ name: itemName, val: itemDef.nutrientValue });
     });
 
-    fuels.sort((a,b) => b.heat - a.heat).forEach(f => {
-        const txt = `${f.name} (${f.heat} P)`;
-        fuelSel.appendChild(new Option(txt, f.name));
-    });
-
-    ferts.sort((a,b) => b.val - a.val).forEach(f => {
-        const txt = `${f.name} (${f.val} V)`;
-        fertSel.appendChild(new Option(txt, f.name));
-    });
+    fuels.sort((a,b) => b.heat - a.heat).forEach(f => { fuelSel.appendChild(new Option(`${f.name} (${f.heat} P)`, f.name)); });
+    ferts.sort((a,b) => b.val - a.val).forEach(f => { fertSel.appendChild(new Option(`${f.name} (${f.val} V)`, f.name)); });
 }
 
 function toggleFuel() {
-    const btn = document.getElementById('btnSelfFuel');
-    const chk = document.getElementById('selfFeed');
+    const btn = document.getElementById('btnSelfFuel'); const chk = document.getElementById('selfFeed');
     chk.checked = !chk.checked;
-    if(chk.checked) {
-        btn.innerText = "Self-Fuel: ON"; btn.classList.remove('btn-inactive-red'); btn.classList.add('btn-active-green');
-    } else {
-        btn.innerText = "Self-Fuel: OFF"; btn.classList.remove('btn-active-green'); btn.classList.add('btn-inactive-red');
-    }
+    if(chk.checked) { btn.innerText = "Self-Fuel: ON"; btn.classList.remove('btn-inactive-red'); btn.classList.add('btn-active-green'); } 
+    else { btn.innerText = "Self-Fuel: OFF"; btn.classList.remove('btn-active-green'); btn.classList.add('btn-inactive-red'); }
     calculate();
 }
 
 function toggleFert() {
-    const btn = document.getElementById('btnSelfFert');
-    const chk = document.getElementById('selfFert');
+    const btn = document.getElementById('btnSelfFert'); const chk = document.getElementById('selfFert');
     chk.checked = !chk.checked;
-    if(chk.checked) {
-        btn.innerText = "Self-Fert: ON"; btn.classList.remove('btn-inactive-red'); btn.classList.add('btn-active-green');
-    } else {
-        btn.innerText = "Self-Fert: OFF"; btn.classList.remove('btn-active-green'); btn.classList.add('btn-inactive-red');
-    }
+    if(chk.checked) { btn.innerText = "Self-Fert: ON"; btn.classList.remove('btn-inactive-red'); btn.classList.add('btn-active-green'); } 
+    else { btn.innerText = "Self-Fert: OFF"; btn.classList.remove('btn-active-green'); btn.classList.add('btn-inactive-red'); }
     calculate();
 }
 
-function setDefaultFuel() {
-    const current = document.getElementById('fuelSelect').value;
-    DB.settings.defaultFuel = current; persist(); updateDefaultButtonState(); alert("Default Fuel Saved: " + current);
-}
-
-function setDefaultFert() {
-    const current = document.getElementById('fertSelect').value;
-    DB.settings.defaultFert = current; persist(); updateDefaultButtonState(); alert("Default Fertilizer Saved: " + current);
-}
+function setDefaultFuel() { const c = document.getElementById('fuelSelect').value; DB.settings.defaultFuel = c; persist(); updateDefaultButtonState(); alert("Default Fuel Saved: " + c); }
+function setDefaultFert() { const c = document.getElementById('fertSelect').value; DB.settings.defaultFert = c; persist(); updateDefaultButtonState(); alert("Default Fertilizer Saved: " + c); }
 
 function updateDefaultButtonState() {
-    const curFuel = document.getElementById('fuelSelect').value;
-    const defFuel = DB.settings.defaultFuel;
+    const curFuel = document.getElementById('fuelSelect').value; const defFuel = DB.settings.defaultFuel;
     const btnFuel = document.getElementById('btnDefFuel');
-    
-    if(curFuel === defFuel) { btnFuel.disabled = true; btnFuel.innerText = "Current Default"; } 
-    else { btnFuel.disabled = false; btnFuel.innerText = "Make Default"; }
+    if(curFuel === defFuel) { btnFuel.disabled = true; btnFuel.innerText = "Current Default"; } else { btnFuel.disabled = false; btnFuel.innerText = "Make Default"; }
 
-    const curFert = document.getElementById('fertSelect').value;
-    const defFert = DB.settings.defaultFert;
+    const curFert = document.getElementById('fertSelect').value; const defFert = DB.settings.defaultFert;
     const btnFert = document.getElementById('btnDefFert');
-    
-    if(curFert === defFert) { btnFert.disabled = true; btnFert.innerText = "Current Default"; } 
-    else { btnFert.disabled = false; btnFert.innerText = "Make Default"; }
+    if(curFert === defFert) { btnFert.disabled = true; btnFert.innerText = "Current Default"; } else { btnFert.disabled = false; btnFert.innerText = "Make Default"; }
 }
 
 function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); }
-
-function saveSettings() {
-    ['lvlBelt','lvlSpeed','lvlAlchemy','lvlFuel','lvlFert'].forEach(k => {
-        DB.settings[k] = parseInt(document.getElementById(k).value) || 0;
-    });
-    persist(); 
-    alert("Settings Saved!");
-}
-
-function resetToDefault() {
-    if(confirm("Factory Reset?\nThis will clear saved data and custom source edits.")) { 
-        localStorage.removeItem(STORAGE_KEY); 
-        localStorage.removeItem(SOURCE_KEY); 
-        location.reload(); 
-    }
-}
+function saveSettings() { ['lvlBelt','lvlSpeed','lvlAlchemy','lvlFuel','lvlFert'].forEach(k => { DB.settings[k] = parseInt(document.getElementById(k).value) || 0; }); persist(); alert("Settings Saved!"); }
+function resetToDefault() { if(confirm("Factory Reset?")) { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(SOURCE_KEY); location.reload(); } }
 
 function switchTab(tabName) {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -653,112 +648,71 @@ function switchTab(tabName) {
 
 function applyChanges() {
     const txt = document.getElementById('json-editor').value;
-    try {
-        eval(txt); 
-        DB = window.ALCHEMY_DB;
-        localStorage.setItem(SOURCE_KEY, txt);
-        persist(); 
-        init(); 
-        alert("Applied!");
-    } catch(e) { alert("Syntax Error: " + e.message); }
+    try { eval(txt); DB = window.ALCHEMY_DB; localStorage.setItem(SOURCE_KEY, txt); persist(); init(); alert("Applied!"); } catch(e) { alert("Syntax Error: " + e.message); }
 }
 
 function exportData() {
-    const txt = document.getElementById('json-editor').value;
-    const blob = new Blob([txt], { type: "text/javascript" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = "alchemy_db.js"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    const txt = document.getElementById('json-editor').value; const blob = new Blob([txt], { type: "text/javascript" });
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "alchemy_db.js"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-function adjustInput(id, delta) {
-    const el = document.getElementById(id); let val = parseInt(el.value) || 0; el.value = Math.max(0, val + delta);
-}
+function adjustInput(id, delta) { const el = document.getElementById(id); let val = parseInt(el.value) || 0; el.value = Math.max(0, val + delta); }
+function adjustRate(delta) { const el = document.getElementById('targetRate'); if(el.disabled) return; let val = parseFloat(el.value) || 0; el.value = (val + delta).toFixed(1); calculate(); }
 
-function adjustRate(delta) {
-    const el = document.getElementById('targetRate');
-    if(el.disabled) return; 
-    let val = parseFloat(el.value) || 0; el.value = (val + delta).toFixed(1); calculate();
-}
-
-function getBeltSpeed(lvl) {
-    if(lvl <= 0) return 60;
-    let speed = 60; speed += Math.min(lvl, 12) * 15;
-    if(lvl > 12) speed += (lvl - 12) * 3;
-    return speed;
-}
-function getSpeedMult(lvl) {
-    let mult = 1.0; mult += Math.min(lvl, 12) * 0.25;
-    if(lvl > 12) mult += (lvl - 12) * 0.05;
-    return mult;
-}
-function getAlchemyMult(lvl) {
-    if(lvl <= 0) return 1.0;
-    let percent = 0; for(let i=1; i<=lvl; i++) { if(i <= 2) percent += 6; else if(i <= 8) percent += 8; else percent += 10; }
-    return 1.0 + (percent / 100);
-}
+function getBeltSpeed(lvl) { let s = 60; if(lvl>0) s += Math.min(lvl,12)*15; if(lvl>12) s += (lvl-12)*3; return s; }
+function getSpeedMult(lvl) { let m = 1.0; m += Math.min(lvl,12)*0.25; if(lvl>12) m += (lvl-12)*0.05; return m; }
+function getAlchemyMult(lvl) { if(lvl<=0) return 1.0; let p = 0; for(let i=1; i<=lvl; i++) { if(i<=2) p+=6; else if(i<=8) p+=8; else p+=10; } return 1.0 + (p/100); }
 
 function applyPreset() {
-    const presetVal = document.getElementById('ratePreset').value;
-    const rateInput = document.getElementById('targetRate');
+    const presetVal = document.getElementById('ratePreset').value; const rateInput = document.getElementById('targetRate');
     if (presetVal === 'custom') { rateInput.disabled = false; } else {
-        rateInput.disabled = true;
-        const lvlBelt = parseInt(document.getElementById('lvlBelt').value) || 0;
+        rateInput.disabled = true; const lvlBelt = parseInt(document.getElementById('lvlBelt').value) || 0;
         rateInput.value = (getBeltSpeed(lvlBelt) * parseFloat(presetVal)).toFixed(2);
     }
     calculate();
 }
 
 function getRecipesFor(item) { if(!DB.recipes) return []; return DB.recipes.filter(r => r.outputs[item]); }
-
 function getActiveRecipe(item) {
     const candidates = getRecipesFor(item);
-    if(candidates.length === 0) return null;
-    if(candidates.length === 1) return candidates[0];
+    if(candidates.length === 0) return null; if(candidates.length === 1) return candidates[0];
     const prefId = DB.settings.preferredRecipes[item];
     if(prefId) { const found = candidates.find(r => r.id === prefId); if(found) return found; }
     return candidates[0];
 }
 
 function getProductionHeatCost(item, speedMult, alchemyMult) {
-    let cost = 0;
-    const recipe = getActiveRecipe(item);
+    let cost = 0; const recipe = getActiveRecipe(item);
     if (recipe) {
         let outQty = recipe.outputs[item];
         if (recipe.machine === "Extractor" || recipe.machine === "Alembic") outQty *= alchemyMult;
         if (DB.machines[recipe.machine] && DB.machines[recipe.machine].heatCost) {
-            const mach = DB.machines[recipe.machine];
-            const parent = DB.machines[mach.parent];
-            const slotsReq = mach.slotsRequired || 1;
-            const pSlots = mach.parentSlots || parent.slots || 3;
+            const mach = DB.machines[recipe.machine]; const parent = DB.machines[mach.parent];
+            const slotsReq = mach.slotsRequired || 1; const pSlots = mach.parentSlots || parent.slots || 3;
             const heatPs = (mach.heatCost * speedMult) + (parent.heatSelf / (pSlots/slotsReq)); 
             cost += heatPs * ((recipe.baseTime / speedMult) / outQty);
         }
-        Object.keys(recipe.inputs).forEach(k => {
-            cost += getProductionHeatCost(k, speedMult, alchemyMult) * (recipe.inputs[k]/outQty);
-        });
+        Object.keys(recipe.inputs).forEach(k => { cost += getProductionHeatCost(k, speedMult, alchemyMult) * (recipe.inputs[k]/outQty); });
     }
     return cost;
 }
 
 function getProductionFertCost(item, fertVal, fertSpeed, speedMult, alchemyMult) {
-    let cost = 0;
-    const itemDef = DB.items[item] || {};
+    let cost = 0; const itemDef = DB.items[item] || {};
     if (itemDef.category === "Herbs" && itemDef.nutrientCost) cost += itemDef.nutrientCost;
     const recipe = getActiveRecipe(item);
     if (recipe) {
         let outQty = recipe.outputs[item];
         if (recipe.machine === "Extractor" || recipe.machine === "Alembic") outQty *= alchemyMult;
-        Object.keys(recipe.inputs).forEach(k => {
-            cost += getProductionFertCost(k, fertVal, fertSpeed, speedMult, alchemyMult) * (recipe.inputs[k]/outQty);
-        });
+        Object.keys(recipe.inputs).forEach(k => { cost += getProductionFertCost(k, fertVal, fertSpeed, speedMult, alchemyMult) * (recipe.inputs[k]/outQty); });
     }
     return cost;
 }
 
-function formatVal(val) {
-    if(val >= 1000000) return (val/1000000).toFixed(2) + 'm';
-    if(val >= 10000) return (val/1000).toFixed(2) + 'k';
-    return val.toFixed(2);
+function formatVal(val) { if(val >= 1000000) return (val/1000000).toFixed(2) + 'm'; if(val >= 10000) return (val/1000).toFixed(2) + 'k'; return val.toFixed(2); }
+
+function toggleBuildGroup(header) {
+    header.classList.toggle('expanded');
 }
 
 // --- MAIN CALC ---
@@ -767,15 +721,12 @@ function calculate() {
         if(!DB || !DB.recipes) return;
         rowCounter = 0; 
 
-        // READ FROM NEW INPUT & SANITIZE CASE
         let rawInput = document.getElementById('targetItemInput').value.trim();
         let targetItem = Object.keys(DB.items).find(k => k.toLowerCase() === rawInput.toLowerCase()) || rawInput;
 
         const targetRate = parseFloat(document.getElementById('targetRate').value) || 0;
-        const selectedFuel = document.getElementById('fuelSelect').value;
-        const selfFeed = document.getElementById('selfFeed').checked;
-        const selectedFert = document.getElementById('fertSelect').value;
-        const selfFert = document.getElementById('selfFert').checked;
+        const selectedFuel = document.getElementById('fuelSelect').value; const selfFeed = document.getElementById('selfFeed').checked;
+        const selectedFert = document.getElementById('fertSelect').value; const selfFert = document.getElementById('selfFert').checked;
 
         const lvlSpeed = parseInt(document.getElementById('lvlSpeed').value) || 0;
         const lvlBelt = parseInt(document.getElementById('lvlBelt').value) || 0;
@@ -783,41 +734,24 @@ function calculate() {
         const lvlAlchemy = parseInt(document.getElementById('lvlAlchemy').value) || 0;
         const lvlFert = parseInt(document.getElementById('lvlFert').value) || 0;
 
-        const speedMult = getSpeedMult(lvlSpeed);
-        const alchemyMult = getAlchemyMult(lvlAlchemy);
-        const fuelMult = 1 + (lvlFuel * 0.10); 
-        const fertMult = 1 + (lvlFert * 0.10); 
+        const speedMult = getSpeedMult(lvlSpeed); const alchemyMult = getAlchemyMult(lvlAlchemy);
+        const fuelMult = 1 + (lvlFuel * 0.10); const fertMult = 1 + (lvlFert * 0.10); 
         const beltSpeed = getBeltSpeed(lvlBelt);
 
-        const treeContainer = document.getElementById('tree');
-        treeContainer.innerHTML = '';
+        const treeContainer = document.getElementById('tree'); treeContainer.innerHTML = '';
         
         const fuelDef = DB.items[selectedFuel] || {};
-        let netFuelEnergy = (fuelDef.heat || 10) * fuelMult;
-        const grossFuelEnergy = netFuelEnergy; 
-        if (selfFeed) {
-            const fuelCost = getProductionHeatCost(selectedFuel, speedMult, alchemyMult);
-            netFuelEnergy -= fuelCost;
-        }
+        let netFuelEnergy = (fuelDef.heat || 10) * fuelMult; const grossFuelEnergy = netFuelEnergy; 
+        if (selfFeed) { netFuelEnergy -= getProductionHeatCost(selectedFuel, speedMult, alchemyMult); }
         if(netFuelEnergy <= 0) netFuelEnergy = 0.1; 
 
         const fertDef = DB.items[selectedFert] || { nutrientValue: 144, maxFertility: 12 };
-        let netFertVal = fertDef.nutrientValue * fertMult;
-        const grossFertVal = netFertVal;
-        if (selfFert) {
-            const fertCost = getProductionFertCost(selectedFert, netFertVal, fertDef.maxFertility, speedMult, alchemyMult);
-            netFertVal -= fertCost;
-        }
+        let netFertVal = fertDef.nutrientValue * fertMult; const grossFertVal = netFertVal;
+        if (selfFert) { netFertVal -= getProductionFertCost(selectedFert, netFertVal, fertDef.maxFertility, speedMult, alchemyMult); }
         if(netFertVal <= 0) netFertVal = 0.1;
 
-        let globalFuelDemandItems = 0; 
-        let globalFertDemandItems = 0; 
-        let globalHeatLoad = 0; 
-        let globalBioLoad = 0; 
-        let globalCostPerMin = 0;
-        let totalMachineCounts = {}; 
-        let totalFurnaces = 0;
-        let totalByproducts = {};
+        let globalFuelDemandItems = 0; let globalFertDemandItems = 0; let globalHeatLoad = 0; let globalBioLoad = 0; let globalCostPerMin = 0;
+        let totalMachineCounts = {}; let totalFurnaces = 0; let totalByproducts = {};
 
         function addMachineCount(name, count) {
             if(!totalMachineCounts[name]) totalMachineCounts[name] = 0;
@@ -825,161 +759,80 @@ function calculate() {
         }
 
         let grossRate = targetRate;
-        if (selfFeed && targetItem === selectedFuel) {
-            const rawFuelEnergy = (fuelDef.heat || 10) * fuelMult;
-            grossRate = targetRate * (rawFuelEnergy / netFuelEnergy);
-        }
-        if (selfFert && targetItem === selectedFert) {
-            const rawFertVal = fertDef.nutrientValue * fertMult;
-            grossRate = targetRate * (rawFertVal / netFertVal);
-        }
+        if (selfFeed && targetItem === selectedFuel) { grossRate = targetRate * (grossFuelEnergy / netFuelEnergy); }
+        if (selfFert && targetItem === selectedFert) { grossRate = targetRate * (grossFertVal / netFertVal); }
 
         const targetItemDef = DB.items[targetItem] || {};
 
         function buildNode(item, rate, isInternalModule) {
-            const div = document.createElement('div');
-            div.className = 'node';
-            const itemDef = DB.items[item] || {};
+            const div = document.createElement('div'); div.className = 'node';
+            const itemDef = DB.items[item] || {}; rowCounter++; const myRowID = rowCounter;
+            let innerHTML = ''; let ingredientChildren = []; let outputTag = "";
+            let isFuel = (item === selectedFuel); let isFert = (item === selectedFert);
             
-            rowCounter++; 
-            const myRowID = rowCounter;
-
-            let innerHTML = '';
-            let ingredientChildren = [];
-            let outputTag = "";
-            
-            let isFuel = (item === selectedFuel);
-            let isFert = (item === selectedFert);
-            
-            if(isFuel) {
-                const totalP = (rate * (fuelDef.heat || 10) * fuelMult) / 60;
-                outputTag = `<span class="output-tag">Output: ${formatVal(totalP)} P/s</span>`;
-            } else if (isFert) {
-                const totalV = (rate * fertDef.nutrientValue * fertMult) / 60;
-                outputTag = `<span class="output-tag">Output: ${formatVal(totalV)} V/s</span>`;
-            }
+            if(isFuel) { outputTag = `<span class="output-tag">Output: ${formatVal((rate * (fuelDef.heat||10)*fuelMult)/60)} P/s</span>`; }
+            else if (isFert) { outputTag = `<span class="output-tag">Output: ${formatVal((rate * fertDef.nutrientValue*fertMult)/60)} V/s</span>`; }
 
             if (itemDef.category === "Herbs" && itemDef.nutrientCost) {
-                const fertilitySpeed = (fertDef.maxFertility || 12); 
-                const timePerItem = itemDef.nutrientCost / fertilitySpeed; 
+                const fertilitySpeed = (fertDef.maxFertility || 12); const timePerItem = itemDef.nutrientCost / fertilitySpeed; 
                 const calculatedSpeed = (60 / timePerItem) * speedMult; 
                 const isLiquid = (itemDef.liquid === true);
                 const itemsPerMinPerMachine = isLiquid ? calculatedSpeed : Math.min(calculatedSpeed, beltSpeed);
-                
                 const machinesNeeded = rate / itemsPerMinPerMachine;
                 addMachineCount("Nursery", machinesNeeded);
 
-                const totalNutrientsNeeded = rate * itemDef.nutrientCost; 
-                const itemsNeeded = totalNutrientsNeeded / grossFertVal; 
+                const totalNutrientsNeeded = rate * itemDef.nutrientCost; const itemsNeeded = totalNutrientsNeeded / grossFertVal; 
+                if (!isInternalModule) { globalFertDemandItems += itemsNeeded; globalBioLoad += (totalNutrientsNeeded / 60); }
                 
-                if (!isInternalModule) {
-                    globalFertDemandItems += itemsNeeded;
-                    globalBioLoad += (totalNutrientsNeeded / 60); // V/s
-                }
-
-                const bioTag = `<span class="bio-tag">Nutr: ${formatVal(totalNutrientsNeeded / 60)} V/s, Needs ${itemsNeeded.toFixed(1)}/m ${selectedFert}</span>`;
-
-                innerHTML = `<div class="node-content">
-                    <span class="row-id">${myRowID})</span>
-                    <span class="qty">${rate.toFixed(1)}/m</span>
-                    <strong>${item}</strong>
-                    <span class="machine-tag">${Math.ceil(machinesNeeded)} Nursery</span>
-                    ${bioTag} ${outputTag}
-                </div>`;
+                innerHTML = `<div class="node-content"><span class="row-id">${myRowID})</span><span class="qty">${rate.toFixed(1)}/m</span><strong>${item}</strong><span class="machine-tag">${Math.ceil(machinesNeeded)} Nursery</span><span class="bio-tag">Nutr: ${formatVal(totalNutrientsNeeded / 60)} V/s, Needs ${itemsNeeded.toFixed(1)}/m ${selectedFert}</span>${outputTag}</div>`;
             } 
             else {
                 const recipe = getActiveRecipe(item);
                 if (!recipe) {
-                    let costHtml = "";
-                    if(itemDef.buyPrice) {
-                        const costPerMin = rate * itemDef.buyPrice;
-                        globalCostPerMin += costPerMin;
-                        costHtml = `<span class="cost-tag">${Math.ceil(costPerMin).toLocaleString()} G/m</span>`;
-                    }
-                    innerHTML = `<div class="node-content">
-                        <span class="row-id">${myRowID})</span>
-                        <span class="qty">${rate.toFixed(1)}/m</span>
-                        <strong>${item}</strong>
-                        <span class="details">(Raw Input)</span>
-                        ${costHtml} ${outputTag}
-                    </div>`;
+                    let costHtml = ""; if(itemDef.buyPrice) { let c = rate * itemDef.buyPrice; globalCostPerMin += c; costHtml = `<span class="cost-tag">${Math.ceil(c).toLocaleString()} G/m</span>`; }
+                    innerHTML = `<div class="node-content"><span class="row-id">${myRowID})</span><span class="qty">${rate.toFixed(1)}/m</span><strong>${item}</strong><span class="details">(Raw Input)</span>${costHtml}${outputTag}</div>`;
                 } else {
-                    let probability = recipe.probability || 1.0;
-                    let attemptsRate = rate / probability;
-                    let outputQty = recipe.outputs[item];
-                    if (recipe.machine === "Extractor" || recipe.machine === "Alembic") {
-                        outputQty = outputQty * alchemyMult;
-                    }
-
-                    const calculatedSpeed = (60 / recipe.baseTime * outputQty) * speedMult;
+                    let prob = recipe.probability || 1.0; let attemptsRate = rate / prob; let outputQty = recipe.outputs[item];
+                    if (recipe.machine === "Extractor" || recipe.machine === "Alembic") outputQty *= alchemyMult;
+                    const calculatedSpeed = (60 / recipe.baseTime * outputQty) * speedMult; 
                     const isLiquid = (itemDef.liquid === true);
                     const itemsPerMinPerMachine = isLiquid ? calculatedSpeed : Math.min(calculatedSpeed, beltSpeed);
-                    
                     const machinesNeeded = attemptsRate / itemsPerMinPerMachine;
                     addMachineCount(recipe.machine, machinesNeeded);
 
-                    if (recipe.failures && probability < 1.0) {
+                    if (recipe.failures && prob < 1.0) {
                         let failureCount = attemptsRate - rate;
-                        recipe.failures.forEach(fail => {
-                            let byproductAmount = failureCount * fail.qty;
-                            if(!totalByproducts[fail.item]) totalByproducts[fail.item] = 0;
-                            totalByproducts[fail.item] += byproductAmount;
-                        });
+                        recipe.failures.forEach(fail => { if(!totalByproducts[fail.item]) totalByproducts[fail.item]=0; totalByproducts[fail.item] += failureCount * fail.qty; });
                     }
 
-                    let heatTag = "";
-                    let failTag = (probability < 1.0) ? `<span class="fail-tag">(${(probability*100).toFixed(0)}% Chance)</span>` : "";
-                    
+                    let heatTag = ""; let failTag = (prob < 1.0) ? `<span class="fail-tag">(${(prob*100).toFixed(0)}% Chance)</span>` : "";
                     if (DB.machines[recipe.machine] && DB.machines[recipe.machine].heatCost) {
-                        const machineDef = DB.machines[recipe.machine];
-                        const parentDef = DB.machines[machineDef.parent];
-                        const slotsReq = machineDef.slotsRequired || 1; 
-                        const pSlots = machineDef.parentSlots || parentDef.slots || 3;
-                        const activeHeatPerMachine = machineDef.heatCost * speedMult;
-                        const parentsNeeded = Math.ceil(machinesNeeded / (pSlots / slotsReq));
-                        const totalHeatPs = (parentsNeeded * parentDef.heatSelf) + (machinesNeeded * activeHeatPerMachine);
-                        
+                        const mach = DB.machines[recipe.machine]; const parent = DB.machines[mach.parent];
+                        const sReq = mach.slotsRequired || 1; const pSlots = mach.parentSlots || parent.slots || 3;
+                        const activeHeat = mach.heatCost * speedMult; const parentsNeeded = Math.ceil(machinesNeeded / (pSlots/sReq));
+                        const totalHeatPs = (parentsNeeded * parent.heatSelf) + (machinesNeeded * activeHeat);
                         totalFurnaces += parentsNeeded;
-                        if (!isInternalModule) globalHeatLoad += totalHeatPs;
-
-                        const itemsNeeded = (totalHeatPs * 60) / grossFuelEnergy;
-                        if (!isInternalModule) globalFuelDemandItems += itemsNeeded;
-
-                        heatTag = `<span class="heat-tag">Heat: ${totalHeatPs.toFixed(1)} P/s, Needs ${itemsNeeded.toFixed(1)}/m ${selectedFuel}</span>`;
+                        if (!isInternalModule) { globalHeatLoad += totalHeatPs; globalFuelDemandItems += (totalHeatPs * 60) / grossFuelEnergy; }
+                        heatTag = `<span class="heat-tag">Heat: ${totalHeatPs.toFixed(1)} P/s, Needs ${((totalHeatPs * 60) / grossFuelEnergy).toFixed(1)}/m ${selectedFuel}</span>`;
                     }
 
-                    let swapHtml = "";
-                    const alternates = getRecipesFor(item);
-                    if(alternates.length > 1) {
-                        swapHtml = `<button class="swap-btn" onclick="openRecipeModal('${item}')" title="Swap Recipe">🔄</button>`;
-                    }
+                    let swapHtml = ""; const alts = getRecipesFor(item);
+                    if(alts.length > 1) { swapHtml = `<button class="swap-btn" onclick="openRecipeModal('${item}')" title="Swap Recipe">🔄</button>`; }
 
-                    innerHTML = `<div class="node-content">
-                        <span class="row-id">${myRowID})</span>
-                        <span class="qty">${rate.toFixed(1)}/m</span>
-                        <strong>${item}</strong> ${swapHtml} ${failTag}
-                        <span class="machine-tag">${Math.ceil(machinesNeeded)} ${recipe.machine}s</span>
-                        ${heatTag} ${outputTag}
-                    </div>`;
-
-                    Object.keys(recipe.inputs).forEach(inputName => {
-                        const inputQty = recipe.inputs[inputName];
-                        const requiredInputRate = (attemptsRate / outputQty) * inputQty;
-                        ingredientChildren.push({ type: 'input', item: inputName, rate: requiredInputRate });
+                    innerHTML = `<div class="node-content"><span class="row-id">${myRowID})</span><span class="qty">${rate.toFixed(1)}/m</span><strong>${item}</strong>${swapHtml}${failTag}<span class="machine-tag">${Math.ceil(machinesNeeded)} ${recipe.machine}s</span>${heatTag}${outputTag}</div>`;
+                    
+                    Object.keys(recipe.inputs).forEach(iName => {
+                        ingredientChildren.push({ type: 'input', item: iName, rate: (attemptsRate / outputQty) * recipe.inputs[iName] });
                     });
                 }
             }
-
             div.innerHTML = innerHTML;
-            ingredientChildren.forEach(child => {
-                div.appendChild(buildNode(child.item, child.rate, isInternalModule));
-            });
+            ingredientChildren.forEach(child => { div.appendChild(buildNode(child.item, child.rate, isInternalModule)); });
             return div;
         }
 
         if(targetItem) {
-            const header = document.createElement('div'); header.className = 'section-header'; header.innerText = `--- Primary Production Chain (${targetItem}) ---`;
-            treeContainer.appendChild(header); treeContainer.appendChild(buildNode(targetItem, grossRate, false));
+            const h = document.createElement('div'); h.className = 'section-header'; h.innerText = `--- Primary Production Chain (${targetItem}) ---`; treeContainer.appendChild(h); treeContainer.appendChild(buildNode(targetItem, grossRate, false));
         }
 
         if (selfFert && globalFertDemandItems > 0) {
@@ -987,8 +840,7 @@ function calculate() {
             if (targetItem === selectedFert) {
                 const note = document.createElement('div'); note.innerHTML = `<div class="node" style="margin-top:20px; color:#aaa; font-style:italic;">Internal Nutrient Source: <strong>${selectedFert}</strong> (Supplied by Main Output)<br>Total Required: ${grossFertNeeded.toFixed(1)}/m</div>`; treeContainer.appendChild(note);
             } else {
-                const header = document.createElement('div'); header.className = 'section-header'; header.innerText = `--- Internal Nutrient Module (${selectedFert}) ---`;
-                treeContainer.appendChild(header); rowCounter = 0; treeContainer.appendChild(buildNode(selectedFert, grossFertNeeded, true));
+                const h = document.createElement('div'); h.className = 'section-header'; h.innerText = `--- Internal Nutrient Module (${selectedFert}) ---`; treeContainer.appendChild(h); rowCounter=0; treeContainer.appendChild(buildNode(selectedFert, grossFertNeeded, true));
             }
         }
 
@@ -997,49 +849,102 @@ function calculate() {
             if (targetItem === selectedFuel) {
                 const note = document.createElement('div'); note.innerHTML = `<div class="node" style="margin-top:20px; color:#aaa; font-style:italic;">Internal Fuel Source: <strong>${selectedFuel}</strong> (Supplied by Main Output)<br>Total Required: ${grossFuelNeeded.toFixed(1)}/m</div>`; treeContainer.appendChild(note);
             } else {
-                const header = document.createElement('div'); header.className = 'section-header'; header.innerText = `--- Internal Heat Module (${selectedFuel}) ---`;
-                treeContainer.appendChild(header); rowCounter = 0; treeContainer.appendChild(buildNode(selectedFuel, grossFuelNeeded, true));
+                const h = document.createElement('div'); h.className = 'section-header'; h.innerText = `--- Internal Heat Module (${selectedFuel}) ---`; treeContainer.appendChild(h); rowCounter=0; treeContainer.appendChild(buildNode(selectedFuel, grossFuelNeeded, true));
             }
         }
 
-        const extHeader = document.createElement('div'); extHeader.className = 'section-header'; extHeader.innerText = `--- External Inputs ---`; treeContainer.appendChild(extHeader);
+        const extH = document.createElement('div'); extH.className = 'section-header'; extH.innerText = `--- External Inputs ---`; treeContainer.appendChild(extH);
         const extDiv = document.createElement('div'); extDiv.className = 'node';
         let extHTML = `<div class="node-content" style="margin-bottom:5px;"><span class="qty" style="color:var(--gold)">${Math.ceil(globalCostPerMin).toLocaleString()} G/m</span><strong>Raw Material Cost</strong></div>`;
-        if (!selfFeed && globalFuelDemandItems > 0) {
-            extHTML += `<div class="node-content" style="margin-bottom:5px;"><span class="qty" style="color:var(--fuel)">${globalFuelDemandItems.toFixed(1)}/m</span><strong>${selectedFuel}</strong> (Fuel Import)</div>`;
-        }
-        if (!selfFert && globalFertDemandItems > 0) {
-            extHTML += `<div class="node-content" style="margin-bottom:5px;"><span class="qty" style="color:var(--bio)">${globalFertDemandItems.toFixed(1)}/m</span><strong>${selectedFert}</strong> (Fertilizer Import)</div>`;
-        }
+        if (!selfFeed && globalFuelDemandItems > 0) { extHTML += `<div class="node-content" style="margin-bottom:5px;"><span class="qty" style="color:var(--fuel)">${globalFuelDemandItems.toFixed(1)}/m</span><strong>${selectedFuel}</strong> (Fuel Import)</div>`; }
+        if (!selfFert && globalFertDemandItems > 0) { extHTML += `<div class="node-content" style="margin-bottom:5px;"><span class="qty" style="color:var(--bio)">${globalFertDemandItems.toFixed(1)}/m</span><strong>${selectedFert}</strong> (Fertilizer Import)</div>`; }
         extDiv.innerHTML = extHTML; treeContainer.appendChild(extDiv);
 
+        // --- BYPRODUCTS SECTION (Moved) ---
+        const bypHeader = document.createElement('div'); bypHeader.className = 'section-header'; bypHeader.innerText = `--- BYPRODUCTS ---`; treeContainer.appendChild(bypHeader);
+        const bypDiv = document.createElement('div'); bypDiv.className = 'node';
+        let bypHTML = '';
+        const sortedByproducts = Object.keys(totalByproducts).sort();
+        if (sortedByproducts.length > 0) {
+            sortedByproducts.forEach(item => {
+                bypHTML += `<div class="node-content"><span class="qty" style="color:var(--byproduct)">${formatVal(totalByproducts[item])}/m</span><strong>${item}</strong></div>`;
+            });
+        } else {
+            bypHTML = `<div class="node-content"><span class="details" style="font-style:italic">None</span></div>`;
+        }
+        bypDiv.innerHTML = bypHTML; treeContainer.appendChild(bypDiv);
+
+        // --- CONSTRUCTION LIST ---
         const buildList = document.getElementById('construction-list'); buildList.innerHTML = '';
+        const totalMatsContainer = document.getElementById('total-mats-container'); totalMatsContainer.innerHTML = '';
+        
         const sortedMachines = Object.keys(totalMachineCounts).sort();
+        let totalConstructionMaterials = {};
+
         sortedMachines.forEach(m => {
-            const count = totalMachineCounts[m];
-            if(count <= 0.01) return;
-            const li = document.createElement('li'); li.className = 'build-item';
-            li.innerHTML = `<span class="build-name">${m}</span> <span class="build-count">${Math.ceil(count)}</span>`;
+            const count = Math.ceil(totalMachineCounts[m]);
+            if(count <= 0) return;
+            
+            const li = document.createElement('li'); li.className = 'build-group';
+            const machineDef = DB.machines[m] || {};
+            const buildCost = machineDef.buildCost;
+
+            let subListHtml = '';
+            if (buildCost) {
+                subListHtml = `<ul class="build-sublist">`;
+                Object.keys(buildCost).forEach(mat => {
+                    const totalQty = buildCost[mat] * count;
+                    subListHtml += `<li class="build-subitem"><span>${mat}</span> <span class="build-val">${totalQty}</span></li>`;
+                    if(!totalConstructionMaterials[mat]) totalConstructionMaterials[mat] = 0;
+                    totalConstructionMaterials[mat] += totalQty;
+                });
+                subListHtml += `</ul>`;
+            } else {
+                subListHtml = `<ul class="build-sublist"><li class="build-subitem" style="color:#666;">No build data</li></ul>`;
+            }
+
+            li.innerHTML = `<div class="build-header" onclick="toggleBuildGroup(this.parentNode)">
+                <span><span class="build-arrow">▶</span> ${m}</span> <span class="build-count">${count}</span>
+            </div>${subListHtml}`;
             buildList.appendChild(li);
         });
+
+        // Add Furnaces
         if(totalFurnaces > 0) {
-            const li = document.createElement('li'); li.className = 'build-item'; li.style.borderTop = "1px dashed #555";
-            li.innerHTML = `<span class="build-name">Stone Furnace (Minimum)</span> <span class="build-count" style="color:#ff9800">${totalFurnaces}</span>`;
+            const li = document.createElement('li'); li.className = 'build-group';
+            const mName = "Stone Furnace";
+            const count = totalFurnaces;
+            const machineDef = DB.machines[mName] || {};
+            const buildCost = machineDef.buildCost;
+            
+            let subListHtml = '';
+            if (buildCost) {
+                subListHtml = `<ul class="build-sublist">`;
+                Object.keys(buildCost).forEach(mat => {
+                    const totalQty = buildCost[mat] * count;
+                    subListHtml += `<li class="build-subitem"><span>${mat}</span> <span class="build-val">${totalQty}</span></li>`;
+                    if(!totalConstructionMaterials[mat]) totalConstructionMaterials[mat] = 0;
+                    totalConstructionMaterials[mat] += totalQty;
+                });
+                subListHtml += `</ul>`;
+            }
+
+            li.innerHTML = `<div class="build-header" style="border-top:1px dashed #555" onclick="toggleBuildGroup(this.parentNode)">
+                <span><span class="build-arrow">▶</span> Stone Furnace (Min)</span> <span class="build-count" style="color:var(--warn)">${count}</span>
+            </div>${subListHtml}`;
             buildList.appendChild(li);
         }
 
-        const sortedByproducts = Object.keys(totalByproducts).sort();
-        if(sortedByproducts.length > 0) {
-            const headerLi = document.createElement('li'); headerLi.style.cssText = "margin-top:15px; color:#888; font-weight:bold; border-bottom:1px solid #444; padding-bottom:5px;"; headerLi.innerText = "Byproducts (Waste)"; buildList.appendChild(headerLi);
-            sortedByproducts.forEach(item => {
-                const count = totalByproducts[item];
-                if(count <= 0.01) return;
-                const li = document.createElement('li'); li.className = 'build-item';
-                li.innerHTML = `<span class="build-name byproduct-item">${item}</span> <span class="build-count">${formatVal(count)}/m</span>`;
-                buildList.appendChild(li);
+        // Render Grand Totals
+        if (Object.keys(totalConstructionMaterials).length > 0) {
+            let totalHtml = `<div class="total-mats-header">Total Materials Required</div>`;
+            Object.keys(totalConstructionMaterials).sort().forEach(mat => {
+                totalHtml += `<div class="total-mat-item"><span>${mat}</span> <strong>${totalConstructionMaterials[mat]}</strong></div>`;
             });
+            totalMatsContainer.innerHTML = totalHtml;
         }
 
+        // Summary Stats
         let internalHeat = selfFeed ? globalHeatLoad : 0;
         let externalHeat = !selfFeed ? globalHeatLoad : 0;
         let internalBio = selfFert ? globalBioLoad : 0;
@@ -1066,10 +971,7 @@ function calculate() {
                 ${profitHtml}
                 <div class="stat-block"><span class="stat-label">Belt Usage (Net)</span><span class="stat-value" style="font-size:1.1em; color:${targetRate > beltSpeed ? '#ff5252' : '#aaa'};">${(targetRate/beltSpeed * 100).toFixed(0)}%</span><span class="stat-sub">Cap: ${beltSpeed}/m</span></div>
             </div>`;
-    } catch(e) {
-        console.error(e);
-        // alert("Calculation Error: " + e.message); 
-    }
+    } catch(e) { console.error(e); }
 }
 
 init();
